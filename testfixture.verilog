@@ -1,0 +1,38 @@
+    logic [2:0] vectors[4:0], currentvec; // vectors has 5 elements each consisting of 3 bits
+    logic [3:0] vectornum, errors;
+
+    // read test vector file and initialize test
+    initial begin
+       $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
+       vectornum = 0; errors = 0;
+    end
+
+
+    // Clock Generation
+    always begin
+       #1 clk = 1; #10; clk = 0; #9;
+    end
+
+
+    // apply test, each time clk goes high...
+    always @(posedge clk) begin
+       currentvec = vectors[vectornum]; //...load in a new test vector
+       a = currentvec[1];               //...apply the nand's a input
+       b = currentvec[2];               //...apply the nand's b input
+       if (currentvec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
+         $display("Completed %d tests with %d errors.",
+                  vectornum, errors);
+         $stop;
+       end
+    end
+
+    // check if test was sucessful and apply next one
+    always @(negedge clk) begin
+       if ((Y_o !== currentvec[0])) begin
+          $display("Error: inputs were a=%h b=%h", a, b);
+          $display("       output = %h (%h expected)",
+                   Y_o, currentvec[0]);
+          errors = errors + 1;
+       end
+       vectornum = vectornum + 1;
+    end
