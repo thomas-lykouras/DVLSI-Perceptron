@@ -1,12 +1,76 @@
-    logic [2:0] vectors[4:0], currentvec; // vectors has 5 elements each consisting of 3 bits
-    logic [3:0] vectornum, errors;
+    parameter TB_INIT = 0;
+    parameter TB_RUNNING = 1;
+    logic state;
+
+    // Weight and Biases
+    logic signed [7:0] W0;
+    logic signed [7:0] W1;
+    logic signed [7:0] B;
+
+    logic [16:0] vectors[149:0], currentvec; // vectors has 150 elements each consisting of 17 bits
+    logic [149:0] vectornum, errors;
 
     // read test vector file and initialize test
     initial begin
        $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
        vectornum = 0; errors = 0;
+       enable = 1;
+       reset  = 0;
+       state  = TB_INIT;
+       W0     = -68;
+       W1     = 116;
+       B      = 4;
     end
 
+    // Setup weights and biases
+    always @(posedge clk) begin
+      case(state)
+        TB_INIT: begin
+            #80;
+            reset=1;
+
+            // Setup W0
+            W1W0b_en_i = 3;
+            W1_i = W1[7]; #20;
+            W1_i = W1[6]; #20;
+            W1_i = W1[5]; #20;
+            W1_i = W1[4]; #20;
+            W1_i = W1[3]; #20;
+            W1_i = W1[2]; #20;
+            W1_i = W1[1]; #20;
+            W1_i = W1[0]; #20;
+
+            // Setup W1
+            W1W0b_en_i = 2;
+            W0_i = W0[7]; #20;
+            W0_i = W0[6]; #20;
+            W0_i = W0[5]; #20;
+            W0_i = W0[4]; #20;
+            W0_i = W0[3]; #20;
+            W0_i = W0[2]; #20;
+            W0_i = W0[1]; #20;
+            W0_i = W0[0]; #20;
+
+            // Setup B
+            W1W0b_en_i = 1;
+            b_i = B[7]; #20;
+            b_i = B[6]; #20;
+            b_i = B[5]; #20;
+            b_i = B[4]; #20;
+            b_i = B[3]; #20;
+            b_i = B[2]; #20;
+            b_i = B[1]; #20;
+            b_i = B[0]; #20;
+
+            W1W0b_en_i = 0;
+            state = TB_RUNNING;
+          end
+        TB_RUNNING: begin
+          end
+        default: begin
+          end
+      endcase
+    end
 
     // Clock Generation
     always begin
@@ -16,23 +80,29 @@
 
     // apply test, each time clk goes high...
     always @(posedge clk) begin
-       currentvec = vectors[vectornum]; //...load in a new test vector
-       a = currentvec[1];               //...apply the nand's a input
-       b = currentvec[2];               //...apply the nand's b input
-       if (currentvec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
-         $display("Completed %d tests with %d errors.",
-                  vectornum, errors);
-         $stop;
-       end
+      if (state == TB_RUNNING) begin
+        currentvec = vectors[vectornum];  //...load in a new test vector
+        X0_i = currentvec[16:9];          //...apply the X0 input
+        X1_i = currentvec[8:1];           //...apply the X1 input
+        if (currentvec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
+          $display("Completed %d tests with %d errors.",
+                   vectornum, errors);
+          $stop;
+        end
+      end
     end
 
     // check if test was sucessful and apply next one
     always @(negedge clk) begin
-       if ((Y_o !== currentvec[0])) begin
-          $display("Error: inputs were a=%h b=%h", a, b);
-          $display("       output = %h (%h expected)",
-                   Y_o, currentvec[0]);
+      #60; // Delay by 3 clk cycles due to pipelining
+      if (state == TB_RUNNING) begin
+        if ((Y_o !== currentvec[0])) begin
+          $display("Error: inputs were X0=%h X1=%h", X0_i, X1_i);
+          $display("       output = %h (%h expected)", Y_o, currentvec[0]);
           errors = errors + 1;
-       end
-       vectornum = vectornum + 1;
+        end
+        vectornum = vectornum + 1;
+      end
     end
+
+// vim: syntax=systemverilog
