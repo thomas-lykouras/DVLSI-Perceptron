@@ -15,7 +15,7 @@ module perceptron_top #(
     input      val_i,
     output     rdy_o,
     output reg val_o,
-    input      rdy_i
+    input      rdy_i,
     // Weights and bias ports
     input  [1:0] W1W0b_en_i,
     input        b_i,
@@ -57,3 +57,6 @@ wire en_in_path;
     );
 
 endmodule
+
+	`include "perceptron_ctrl.v"
+	`include "perceptron_dp.v"

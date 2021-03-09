@@ -11,8 +11,10 @@ module testbench();
     // Input signals
     logic                    clk;
     logic                    reset;
-    logic                    en_in_path;
-    logic                    en_out_path;
+    logic                    val_i;
+    logic                    rdy_o;
+    logic                    val_o;
+    logic                    rdy_i;
     logic  [1:0]             W1W0b_en_i;
     logic                    b_i;
     logic                    W0_i;
@@ -22,11 +24,13 @@ module testbench();
     logic                    Y_o;
 
     // The device under test
-    perceptron_dp dut(
+    perceptron_top dut(
       .clk(clk),
       .reset(reset),
-      .en_out_path(en_out_path),
-      .en_in_path(en_in_path),
+      .val_i(val_i),
+      .rdy_o(rdy_o),
+      .val_o(val_o),
+      .rdy_i(rdy_i),
       .W1W0b_en_i(W1W0b_en_i),
       .b_i(b_i),
       .W0_i(W0_i),
@@ -40,5 +44,5 @@ module testbench();
 
 endmodule
 
-	`include "perceptron_dp.v"
+	`include "perceptron_top.v"
 
