@@ -11,7 +11,8 @@ module testbench();
     // Input signals
     logic                    clk;
     logic                    reset;
-    logic                    enable;
+    logic                    en_in_path;
+    logic                    en_out_path;
     logic  [1:0]             W1W0b_en_i;
     logic                    b_i;
     logic                    W0_i;
@@ -24,7 +25,8 @@ module testbench();
     perceptron_dp dut(
       .clk(clk),
       .reset(reset),
-      .enable(enable),
+      .en_out_path(en_out_path),
+      .en_in_path(en_in_path),
       .W1W0b_en_i(W1W0b_en_i),
       .b_i(b_i),
       .W0_i(W0_i),

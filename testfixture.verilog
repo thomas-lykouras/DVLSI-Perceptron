@@ -14,12 +14,13 @@
     initial begin
        $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
        vectornum = 0; errors = 0;
-       enable = 1;
-       reset  = 0;
-       state  = TB_INIT;
-       W0     = -68;
-       W1     = 116;
-       B      = 4;
+       en_in_path  = 1;
+       en_out_path = 1;
+       reset       = 0;
+       state       = TB_INIT;
+       W0          = -68;
+       W1          = 116;
+       B           = 4;
     end
 
     // Setup weights and biases

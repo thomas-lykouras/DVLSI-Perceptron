@@ -12,7 +12,8 @@ module perceptron_dp #(
     input clk,
     input reset,
     // Control from control block
-    input enable,
+    input en_out_path,
+    input en_in_path,
     // Weights and bias ports
     input  [1:0] W1W0b_en_i,
     input        b_i,
@@ -78,16 +79,19 @@ begin
     x1  <= 0;
     Y_o <= 0;
   end else begin
-    if (enable == 1)
+
+    if (en_in_path == 1)
     begin
       // Register our new inputs
       x0 <= X0_i;
       x1 <= X1_i;
+    end
 
+    if (en_out_path == 1) begin
       // Compute perceptron by applying a step function
       Y_o <= ~y[WIDTH*2+2-1];
-
     end
+
   end
 end
 
