@@ -28,9 +28,10 @@ assign en_out_path = rdy_i || (!val_o);
 
 always @ (posedge clk)
 begin
-  if (reset == 1)
+  if (reset == 0)
   begin
     val_o_reg <= 0;
+    val_o     <= 0;
   end else begin
     // First Register
     if (en_in_path == 1) begin
