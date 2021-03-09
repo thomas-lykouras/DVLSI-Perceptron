@@ -2,3 +2,12 @@
 *.swp
 *.un~
 *.bak
+
+#sim-nc generated files
+.simvision/
+INCA_libs/
+nc.history
+nc.log
+ncverilog.key
+waves.shm/
+
