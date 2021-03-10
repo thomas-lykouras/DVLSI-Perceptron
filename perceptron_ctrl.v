@@ -24,7 +24,7 @@ module perceptron_ctrl (
 reg  val_o_reg;
 wire reset_internal;
 
-assign rdy_o = ((rdy_i || (val_o && val_o_reg))) && (reset_internal);
+assign rdy_o = ((rdy_i || (~(val_o && val_o_reg)))) && (reset_internal);
 
 assign en_in_path  = rdy_o;
 assign en_out_path = rdy_i || (!val_o);
