@@ -22,57 +22,47 @@
        W0          = -68;
        W1          = 116;
        B           = 4;
+
+       #80;
+       reset=1;
+
+       // Setup W1
+       W1W0b_en_i = 3;
+       W1_i = W1[7]; #20;
+       W1_i = W1[6]; #20;
+       W1_i = W1[5]; #20;
+       W1_i = W1[4]; #20;
+       W1_i = W1[3]; #20;
+       W1_i = W1[2]; #20;
+       W1_i = W1[1]; #20;
+       W1_i = W1[0]; #20;
+
+       // Setup W0
+       W1W0b_en_i = 2;
+       W0_i = W0[7]; #20;
+       W0_i = W0[6]; #20;
+       W0_i = W0[5]; #20;
+       W0_i = W0[4]; #20;
+       W0_i = W0[3]; #20;
+       W0_i = W0[2]; #20;
+       W0_i = W0[1]; #20;
+       W0_i = W0[0]; #20;
+
+       // Setup B
+       W1W0b_en_i = 1;
+       b_i = B[7]; #20;
+       b_i = B[6]; #20;
+       b_i = B[5]; #20;
+       b_i = B[4]; #20;
+       b_i = B[3]; #20;
+       b_i = B[2]; #20;
+       b_i = B[1]; #20;
+       b_i = B[0]; #20;
+
+       W1W0b_en_i = 0;
+       state = TB_RUNNING;
     end
 
-    // Setup weights and biases
-    always @(posedge clk) begin
-      case(state)
-        TB_INIT: begin
-            #80;
-            reset=1;
-
-            // Setup W1
-            W1W0b_en_i = 3;
-            W1_i = W1[7]; #20;
-            W1_i = W1[6]; #20;
-            W1_i = W1[5]; #20;
-            W1_i = W1[4]; #20;
-            W1_i = W1[3]; #20;
-            W1_i = W1[2]; #20;
-            W1_i = W1[1]; #20;
-            W1_i = W1[0]; #20;
-
-            // Setup W0
-            W1W0b_en_i = 2;
-            W0_i = W0[7]; #20;
-            W0_i = W0[6]; #20;
-            W0_i = W0[5]; #20;
-            W0_i = W0[4]; #20;
-            W0_i = W0[3]; #20;
-            W0_i = W0[2]; #20;
-            W0_i = W0[1]; #20;
-            W0_i = W0[0]; #20;
-
-            // Setup B
-            W1W0b_en_i = 1;
-            b_i = B[7]; #20;
-            b_i = B[6]; #20;
-            b_i = B[5]; #20;
-            b_i = B[4]; #20;
-            b_i = B[3]; #20;
-            b_i = B[2]; #20;
-            b_i = B[1]; #20;
-            b_i = B[0]; #20;
-
-            W1W0b_en_i = 0;
-            state = TB_RUNNING;
-          end
-        TB_RUNNING: begin
-          end
-        default: begin
-          end
-      endcase
-    end
 
     // Clock Generation
     always begin
