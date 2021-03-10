@@ -7,13 +7,14 @@
     logic signed [7:0] W1;
     logic signed [7:0] B;
 
-    logic [16:0] vectors[149:0], currentvec; // vectors has 150 elements each consisting of 17 bits
-    logic [149:0] vectornum, errors;
+    logic [16:0] vectors[149:0], current_in_vec, current_out_vec; // vectors has 150 elements each consisting of 17 bits
+    logic [149:0] vector_in_idx, errors, vector_out_idx;
 
     // read test vector file and initialize test
     initial begin
        $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
-       vectornum = 0; errors = 0;
+       vector_in_idx = 0; errors = 0;
+       vector_out_idx = 0;
        val_i       = 1;
        rdy_i       = 1;
        reset       = 0;
@@ -82,28 +83,36 @@
     // apply test, each time clk goes high...
     always @(posedge clk) begin
       if (state == TB_RUNNING) begin
-        currentvec = vectors[vectornum];  //...load in a new test vector
-        X0_i = currentvec[16:9];          //...apply the X0 input
-        X1_i = currentvec[8:1];           //...apply the X1 input
-        if (currentvec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
-          $display("Completed %d tests with %d errors.",
-                   vectornum, errors);
-          $stop;
+        current_in_vec = vectors[vector_in_idx];  //...load in a new test vector
+        if (rdy_o && val_i) begin
+          X0_i = current_in_vec[16:9];          //...apply the X0 input
+          X1_i = current_in_vec[8:1];           //...apply the X1 input
+          vector_in_idx = vector_in_idx + 1;
         end
       end
     end
 
     // check if test was sucessful and apply next one
-    always @(negedge clk) begin
-      #60; // Delay by 3 clk cycles due to pipelining
+    always @(posedge clk) begin
+      current_out_vec = vectors[vector_out_idx];  //...load in a new test vector
       if (state == TB_RUNNING) begin
-        if ((Y_o !== currentvec[0])) begin
-          $display("Error: inputs were X0=%h X1=%h", X0_i, X1_i);
-          $display("       output = %h (%h expected)", Y_o, currentvec[0]);
-          errors = errors + 1;
+        if (rdy_i && val_o) begin
+          if ((Y_o !== current_out_vec[0])) begin
+            $display("Error: inputs were X0=%h X1=%h", X0_i, X1_i);
+            $display("       output = %h (%h expected)", Y_o, current_out_vec[0]);
+            errors = errors + 1;
+          end
+          vector_out_idx = vector_out_idx + 1;
         end
-        vectornum = vectornum + 1;
       end
+
+      // Stop condition
+      if (current_out_vec[0] === 1'bx) begin // if the output is unknown (x), you have finished the test
+        $display("Completed %d tests with %d errors.",
+                 vector_out_idx, errors);
+        $stop;
+      end
+
     end
 
 // vim: syntax=systemverilog

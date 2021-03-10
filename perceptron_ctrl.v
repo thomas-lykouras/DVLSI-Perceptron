@@ -9,6 +9,8 @@ module perceptron_ctrl (
     // Clocking
     input      clk,
     input      reset,
+    //
+    input  [1:0] W1W0b_en_i,
     // Control from control block
     output     en_out_path,
     output     en_in_path,
@@ -19,16 +21,19 @@ module perceptron_ctrl (
     input      rdy_i
 );
 
-reg val_o_reg;
+reg  val_o_reg;
+wire reset_internal;
 
-assign rdy_o = (rdy_i || (val_o && val_o_reg));
+assign rdy_o = ((rdy_i || (val_o && val_o_reg))) && (reset_internal);
 
 assign en_in_path  = rdy_o;
 assign en_out_path = rdy_i || (!val_o);
 
+assign reset_internal = reset && (~|W1W0b_en_i);
+
 always @ (posedge clk)
 begin
-  if (reset == 0)
+  if (reset_internal == 0)
   begin
     val_o_reg <= 0;
     val_o     <= 0;

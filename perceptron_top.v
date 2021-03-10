@@ -34,6 +34,7 @@ wire en_in_path;
     perceptron_ctrl ctrl(
       .clk        (clk),
       .reset      (reset),
+      .W1W0b_en_i (W1W0b_en_i),
       .en_out_path(en_out_path),
       .en_in_path (en_in_path),
       .val_i      (val_i),
