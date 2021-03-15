@@ -12,55 +12,79 @@
 
     // read test vector file and initialize test
     initial begin
-       $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
-       vector_in_idx = 0; errors = 0;
-       vector_out_idx = 0;
-       val_i       = 1;
-       rdy_i       = 1;
-       reset       = 0;
-       state       = TB_INIT;
-       W0          = -68;
-       W1          = 116;
-       B           = 4;
+      $readmemb("perceptron.tv", vectors); // put your test vectors into the vectors variable
+      errors         = 0;
+      vector_in_idx  = 0;
+      vector_out_idx = 0;
+      val_i          = 1;
+      rdy_i          = 1;
+      reset          = 0;
+      state          = TB_INIT;
+      W0             = -68;
+      W1             = 116;
+      B              = 4;
 
-       #80;
-       reset=1;
+      #81;
+      reset=1;
 
-       // Setup W1
-       W1W0b_en_i = 3;
-       W1_i = W1[7]; #20;
-       W1_i = W1[6]; #20;
-       W1_i = W1[5]; #20;
-       W1_i = W1[4]; #20;
-       W1_i = W1[3]; #20;
-       W1_i = W1[2]; #20;
-       W1_i = W1[1]; #20;
-       W1_i = W1[0]; #20;
+      // Setup W1
+      W1W0b_en_i = 3;
+      W1_i = W1[7]; #20;
+      W1_i = W1[6]; #20;
+      W1_i = W1[5]; #20;
+      W1_i = W1[4]; #20;
+      W1_i = W1[3]; #20;
+      W1_i = W1[2]; #20;
+      W1_i = W1[1]; #20;
+      W1_i = W1[0]; #20;
 
-       // Setup W0
-       W1W0b_en_i = 2;
-       W0_i = W0[7]; #20;
-       W0_i = W0[6]; #20;
-       W0_i = W0[5]; #20;
-       W0_i = W0[4]; #20;
-       W0_i = W0[3]; #20;
-       W0_i = W0[2]; #20;
-       W0_i = W0[1]; #20;
-       W0_i = W0[0]; #20;
+      // Setup W0
+      W1W0b_en_i = 2;
+      W0_i = W0[7]; #20;
+      W0_i = W0[6]; #20;
+      W0_i = W0[5]; #20;
+      W0_i = W0[4]; #20;
+      W0_i = W0[3]; #20;
+      W0_i = W0[2]; #20;
+      W0_i = W0[1]; #20;
+      W0_i = W0[0]; #20;
 
-       // Setup B
-       W1W0b_en_i = 1;
-       b_i = B[7]; #20;
-       b_i = B[6]; #20;
-       b_i = B[5]; #20;
-       b_i = B[4]; #20;
-       b_i = B[3]; #20;
-       b_i = B[2]; #20;
-       b_i = B[1]; #20;
-       b_i = B[0]; #20;
+      // Setup B
+      W1W0b_en_i = 1;
+      b_i = B[7]; #20;
+      b_i = B[6]; #20;
+      b_i = B[5]; #20;
+      b_i = B[4]; #20;
+      b_i = B[3]; #20;
+      b_i = B[2]; #20;
+      b_i = B[1]; #20;
+      b_i = B[0]; #20;
 
-       W1W0b_en_i = 0;
-       state = TB_RUNNING;
+      W1W0b_en_i = 0;
+      state = TB_RUNNING;
+
+      // Add random val_i/rdy_i assertions
+      #205
+      val_i = 0;
+      rdy_i = 0;
+      #20
+      val_i = 1;
+      rdy_i = 1;
+      #20
+      val_i = 0;
+      rdy_i = 0;
+      #200
+      val_i = 0;
+      rdy_i = 0;
+      #200
+      val_i = 0;
+      rdy_i = 1;
+      #160
+      val_i = 1;
+      rdy_i = 0;
+      #200
+      val_i = 1;
+      rdy_i = 1;
     end
 
 
@@ -69,14 +93,15 @@
        #1 clk = 1; #10; clk = 0; #9;
     end
 
-
     // apply test, each time clk goes high...
     always @(posedge clk) begin
+      current_in_vec = vectors[vector_in_idx];  //...load in a new test vector
       if (state == TB_RUNNING) begin
-        current_in_vec = vectors[vector_in_idx];  //...load in a new test vector
+        X0_i = current_in_vec[16:9];          //...apply the X0 input
+        X1_i = current_in_vec[8:1];           //...apply the X1 input
+
+        // Increment input index when input is rdy/val
         if (rdy_o && val_i) begin
-          X0_i = current_in_vec[16:9];          //...apply the X0 input
-          X1_i = current_in_vec[8:1];           //...apply the X1 input
           vector_in_idx = vector_in_idx + 1;
         end
       end
@@ -88,11 +113,12 @@
       if (state == TB_RUNNING) begin
         if (rdy_i && val_o) begin
           if ((Y_o !== current_out_vec[0])) begin
-            $display("Error: inputs were X0=%h X1=%h", X0_i, X1_i);
+            $display("Error: inputs were X0=%h X1=%h", current_out_vec[16:9], current_out_vec[8:1]);
             $display("       output = %h (%h expected)", Y_o, current_out_vec[0]);
             errors = errors + 1;
           end
           vector_out_idx = vector_out_idx + 1;
+          current_out_vec = vectors[vector_out_idx];  //...load in a new test vector
         end
       end
 
