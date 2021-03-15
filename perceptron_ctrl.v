@@ -24,13 +24,18 @@ module perceptron_ctrl (
 reg  val_o_reg;
 wire reset_internal;
 
+// Assert rdy_o when we are not reset
+// and either when the sink is ready, or there is space in the pipeline
 assign rdy_o = ((rdy_i || (~(val_o && val_o_reg)))) && (reset_internal);
 
 assign en_in_path  = rdy_o;
 assign en_out_path = rdy_i || (!val_o);
 
+// Mask reset with W1W0b_en_i as to not transistion when
+// weights and biases are not set.
 assign reset_internal = reset && (~|W1W0b_en_i);
 
+// Pipeline val_i && rdy_o through to val_o
 always @ (posedge clk)
 begin
   if (reset_internal == 0)

@@ -89,6 +89,7 @@ begin
 
     if (en_out_path == 1) begin
       // Compute perceptron by applying a step function
+      // and flopping the output
       Y_o <= ~y[WIDTH*2+2-1];
     end
 
