@@ -28,15 +28,15 @@ module perceptron_top #(
     output reg Y_o
 );
 
-wire en_out_path;
-wire en_in_path;
+wire en_egress;
+wire en_ingress;
 
     perceptron_ctrl ctrl(
       .clk        (clk),
       .reset      (reset),
       .W1W0b_en_i (W1W0b_en_i),
-      .en_out_path(en_out_path),
-      .en_in_path (en_in_path),
+      .en_egress  (en_egress),
+      .en_ingress (en_ingress),
       .val_i      (val_i),
       .rdy_o      (rdy_o),
       .val_o      (val_o),
@@ -46,8 +46,8 @@ wire en_in_path;
     perceptron_dp #(WIDTH) dp(
       .clk        (clk),
       .reset      (reset),
-      .en_out_path(en_out_path),
-      .en_in_path (en_in_path),
+      .en_egress  (en_egress),
+      .en_ingress (en_ingress),
       .W1W0b_en_i (W1W0b_en_i),
       .b_i        (b_i),
       .W0_i       (W0_i),
