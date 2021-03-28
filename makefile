@@ -4,5 +4,5 @@ all:
 	sim-nc $(TB_FILE)
 
 gui:
-	sim-ncg $(TB_FILE)
+	sim-ncg $(TB_FILE) &
 

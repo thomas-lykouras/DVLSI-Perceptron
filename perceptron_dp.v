@@ -37,7 +37,7 @@ always @ (posedge clk)
 begin
 
   // Synchronous reset
-  if (reset == 0)
+  if (reset == 1)
   begin
     w0 <= 0;
     w1 <= 0;
@@ -50,7 +50,7 @@ begin
       w1 <= {w1[WIDTH-2:0] , W1_i};
     end
 
-    // W2 Shift register
+    // W0 Shift register
     if (W1W0b_en_i == 2'b10)
     begin
       w0 <= {w0[WIDTH-2:0] , W0_i};
@@ -73,7 +73,7 @@ always @ (posedge clk)
 begin
 
   // Synchronous Reset
-  if (reset == 0)
+  if (reset == 1)
   begin
     x0  <= 0;
     x1  <= 0;

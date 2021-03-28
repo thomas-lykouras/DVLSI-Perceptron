@@ -25,19 +25,19 @@ module testbench();
 
     // The device under test
     perceptron_top dut(
-      .clk(clk),
-      .reset(reset),
-      .val_i(val_i),
-      .rdy_o(rdy_o),
-      .val_o(val_o),
-      .rdy_i(rdy_i),
+      .clk       (clk),
+      .reset     (reset),
+      .val_i     (val_i),
+      .rdy_o     (rdy_o),
+      .val_o     (val_o),
+      .rdy_i     (rdy_i),
       .W1W0b_en_i(W1W0b_en_i),
-      .b_i(b_i),
-      .W0_i(W0_i),
-      .W1_i(W1_i),
-      .X0_i(X0_i),
-      .X1_i(X1_i),
-      .Y_o(Y_o)
+      .b_i       (b_i),
+      .W0_i      (W0_i),
+      .W1_i      (W1_i),
+      .X0_i      (X0_i),
+      .X1_i      (X1_i),
+      .Y_o       (Y_o)
     );
 
 	`include "testfixture.verilog"
